@@ -102,19 +102,7 @@ export default function UsersPage({ api }) {
       <div className="card border-0 shadow-sm" style={{ borderRadius: '16px', overflow: 'hidden' }}>
         <div className="card-header bg-white p-4 border-0">
           <div className="row g-3">
-            <div className="col-md-6">
-              <div className="input-group input-group-sm border rounded-pill px-2 py-1 bg-light">
-                <span className="input-group-text bg-transparent border-0 text-muted">🔍</span>
-                <input
-                  type="text"
-                  className="form-control bg-transparent border-0 shadow-none"
-                  placeholder="Tìm theo tên hoặc username..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="col-md-3">
+            <div className="col-md-9">
               <select 
                 className="form-select form-select-sm border-0 bg-light rounded-pill px-3 shadow-none"
                 value={roleFilter}

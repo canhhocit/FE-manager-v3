@@ -1,11 +1,18 @@
 import { useCallback } from "react";
 
-const BASE = "https://be-event-mng-v2.onrender.com/event-mng";
+const BASE_GATEWAY = "http://localhost:8888";
+
+const getUrl = (path) => {
+  if (path.startsWith("/identity") || path.startsWith("/notifications") || path.startsWith("/event-mng")) {
+    return `${BASE_GATEWAY}${path}`;
+  }
+  return `${BASE_GATEWAY}/event-mng${path}`;
+};
 
 export const getImageUrl = (url) => {
   if (!url) return "";
   if (url.startsWith("http")) return url;
-  return `${BASE}${url.startsWith("/") ? "" : "/"}${url}`;
+  return getUrl(url.startsWith("/") ? url : `/${url}`);
 };
 
 // export const getImageUrl = (url) => {
@@ -27,7 +34,7 @@ export function useApi() {
 
   const get = useCallback(
     (path) =>
-      fetch(`${BASE}${path}`, {
+      fetch(getUrl(path), {
         headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       }).then((r) => r.json()),
     [token]
@@ -36,7 +43,7 @@ export function useApi() {
   const post = useCallback(
     (path, body) => {
       const isFormData = body instanceof FormData;
-      return fetch(`${BASE}${path}`, {
+      return fetch(getUrl(path), {
         method: "POST",
         headers: {
           ...(isFormData ? {} : { "Content-Type": "application/json" }),
@@ -51,7 +58,7 @@ export function useApi() {
   const put = useCallback(
     (path, body) => {
       const isFormData = body instanceof FormData;
-      return fetch(`${BASE}${path}`, {
+      return fetch(getUrl(path), {
         method: "PUT",
         headers: {
           ...(isFormData ? {} : { "Content-Type": "application/json" }),
@@ -65,7 +72,7 @@ export function useApi() {
 
   const patch = useCallback(
     (path) =>
-      fetch(`${BASE}${path}`, {
+      fetch(getUrl(path), {
         method: "PATCH",
         headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       }).then((r) => r.json()),
@@ -74,7 +81,7 @@ export function useApi() {
 
   const del = useCallback(
     (path) =>
-      fetch(`${BASE}${path}`, {
+      fetch(getUrl(path), {
         method: "DELETE",
         headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       }).then((r) => r.json()),

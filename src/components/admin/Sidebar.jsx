@@ -7,7 +7,6 @@ const MENU = [
   { key: "events",     label: "Sự kiện"},
   { key: "users",      label: "Người dùng"},
   { key: "categories", label: "Danh mục"},
-  { key: "statis",     label: "Thống kê"},
 ];
 
 export default function Sidebar({ active, onSelect, onProfileClick }) {

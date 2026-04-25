@@ -17,7 +17,7 @@ export default function ForgotPassword() {
     setLoading(true);
     setMessage({ text: "", type: "" });
     try {
-      const res = await api.post("/auth/forgot-password", { email });
+      const res = await api.post("/identity/auth/forgot-password", { email });
       if (res.code === 1000) {
         setStep(2);
         setMessage({ text: "Mã OTP đã được gửi đến email của bạn.", type: "success" });
@@ -37,7 +37,7 @@ export default function ForgotPassword() {
     setLoading(true);
     setMessage({ text: "", type: "" });
     try {
-      const res = await api.post("/auth/reset-password", { email, otp, newPassword });
+      const res = await api.post("/identity/auth/reset-password", { email, otp, newPassword });
       if (res.code === 1000) {
         alert("Đổi mật khẩu thành công. Vui lòng đăng nhập lại.");
         navigate("/login");

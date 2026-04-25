@@ -371,19 +371,7 @@ export default function EventsPage({ api }) {
       <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
         <div className="card-header bg-white p-4 border-0">
           <div className="row g-3 align-items-center">
-            <div className="col-md-4">
-              <div className="input-group input-group-sm border rounded-pill px-3 py-1" style={{ backgroundColor: '#f8f9fa' }}>
-                <input
-                  type="text"
-                  className="form-control bg-transparent border-0 shadow-none"
-                  placeholder="Tìm tên sự kiện..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSearch(e)}
-                />
-              </div>
-            </div>
-            <div className="col-md-4">
+            <div className="col-md-8">
               <select
                 className="form-select form-select-sm border-0 bg-light rounded-pill px-3 shadow-none"
                 value={status}

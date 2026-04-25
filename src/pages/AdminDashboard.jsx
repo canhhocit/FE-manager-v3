@@ -5,7 +5,6 @@ import DashboardPage  from "../components/admin/DashboardPage";
 import EventsPage     from "../components/admin/EventsPage";
 import UsersPage      from "../components/admin/UsersPage";
 import CategoriesPage from "../components/admin/CategoriesPage";
-import StatisticsPage     from "../components/admin/StatisticsPage";
 import ProfileModal from "../components/admin/ProfileModal";
 
 export default function AdminDashboard() {
@@ -18,7 +17,6 @@ export default function AdminDashboard() {
     events:     <EventsPage     api={api} />,
     users:      <UsersPage      api={api} />,
     categories: <CategoriesPage api={api} />,
-    statis:     <StatisticsPage     api={api} />,
   };
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { API_BASE } from "../utils/api";
 
-const API_URL = `${API_BASE}/auth/register`;
+const API_URL = `${API_BASE}/identity/auth/register`;
 
 export default function Register() {
   const [form, setForm] = useState({
