@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { API_BASE } from "../utils/api";
 
-const API_URL = `${API_BASE}/identity/auth/login`;
+const API_URL = `${API_BASE}/api/v1/auth/login`;
 
 export default function Login() {
   const { login } = useAuth();
@@ -75,9 +75,11 @@ export default function Login() {
 
         const payload = JSON.parse(atob(data.result.token.split(".")[1]));
 
-        if (payload.scope === "ADMIN") {
+        const scopes = payload.scope ? payload.scope.split(" ") : [];
+        
+        if (scopes.includes("ROLE_ADMIN")) {
           navigate("/admin");
-        } else if (payload.scope === "ORGANIZER") {
+        } else if (scopes.includes("ROLE_ORGANIZER")) {
           navigate("/organizer");
         } else {
           navigate("/");

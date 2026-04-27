@@ -40,22 +40,31 @@ export default function UsersPage({ api }) {
   const [sortOrder, setSortOrder] = useState("asc"); // 'asc' = cũ nhất, 'desc' = mới nhất
   const [refetch, setRefetch] = useState(0);
 
+  const [stats, setStats] = useState({ customers: 0, organizers: 0, total: 0 });
+
+  useEffect(() => {
+    api.get(`/users/admin/stats`).then((res) => {
+      if (res.result) setStats(res.result);
+    });
+  }, [refetch]);
+
   useEffect(() => {
     setLoading(true);
+    const roleParam = roleFilter ? `&role=${roleFilter}` : "";
     const order = sortOrder === "asc" ? "asc" : "desc";
-    api.get(`/users?page=${page}&size=8&sort=createdAt,${order}`).then((res) => {
+    api.get(`/users/admin?page=${page}&size=8&search=${search}${roleParam}&sort=createdAt,${order}`).then((res) => {
       setUsers(res.result?.content ?? []);
       setTotalPages(res.result?.totalPages ?? 1);
       setTotalUsers(res.result?.totalElements ?? 0);
       setLoading(false);
     });
-  }, [page, refetch, sortOrder]);
+  }, [page, refetch, sortOrder, roleFilter, search]);
 
   const handleDisable = async (username) => {
     if (!window.confirm(`Xác nhận khóa tài khoản "${username}"?`)) return;
     setDisablingId(username);
     try {
-      await api.del(`/users/${username}`);
+      await api.del(`/users/admin/${username}`);
       setRefetch(n => n + 1);
     } finally {
       setDisablingId(null);
@@ -66,7 +75,7 @@ export default function UsersPage({ api }) {
     if (!window.confirm(`Xác nhận mở khóa tài khoản "${username}"?`)) return;
     setDisablingId(username);
     try {
-      await api.patch(`/users/${username}/unlock`);
+      await api.patch(`/users/admin/${username}/unlock`);
       setRefetch(n => n + 1);
     } finally {
       setDisablingId(null);
@@ -91,11 +100,14 @@ export default function UsersPage({ api }) {
 
       {/* Stats Row */}
       <div className="row g-3 mb-4">
-        <div className="col-md-6">
-          <UserStat label="Tổng người dùng" value={totalUsers} color="#6c5ce7" icon="" />
+        <div className="col-md-4">
+          <UserStat label="Khách hàng" value={stats.customers} color="#6c5ce7" icon="👤" />
         </div>
-        <div className="col-md-6">
-          <UserStat label="Ban tổ chức (Organizer)" value={users.filter(u => u.role === 'ORGANIZER').length} color="#00b894" icon="" />
+        <div className="col-md-4">
+          <UserStat label="Ban tổ chức" value={stats.organizers} color="#00b894" icon="🏢" />
+        </div>
+        <div className="col-md-4">
+          <UserStat label="Tổng cộng" value={stats.total} color="#0984e3" icon="📊" />
         </div>
       </div>
 
@@ -106,12 +118,11 @@ export default function UsersPage({ api }) {
               <select 
                 className="form-select form-select-sm border-0 bg-light rounded-pill px-3 shadow-none"
                 value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
+                onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
               >
-                <option value="">Tất cả vai trò</option>
+                <option value="">Tất cả (Customer + Organizer)</option>
                 <option value="CUSTOMER">Khách hàng</option>
                 <option value="ORGANIZER">Ban tổ chức</option>
-                <option value="ADMIN">Quản trị viên</option>
               </select>
             </div>
             <div className="col-md-3 text-md-end">

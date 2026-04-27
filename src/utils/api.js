@@ -1,14 +1,11 @@
-const BASE = "http://localhost:8888";
+const BASE = "http://localhost:8080";
 
 export async function apiFetch(path, options = {}) {
   const token = localStorage.getItem("token");
   const authHeader = (token && token !== "null" && token !== "undefined") ? `Bearer ${token}` : "";
   
   const getUrl = (p) => {
-    if (p.startsWith("/identity") || p.startsWith("/notifications") || p.startsWith("/event-mng")) {
-      return `${BASE}${p}`;
-    }
-    return `${BASE}/event-mng${p}`;
+    return `${BASE}${p}`;
   };
 
   const res = await fetch(getUrl(path), {

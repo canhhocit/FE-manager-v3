@@ -1,10 +1,10 @@
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { getToken, saveToken, removeToken } from "../utils/token";
 
-// Giải mã JWT để lấy thông tin user 
+// Helper: decode JWT payload
 function parseJwt(token) {
   try {
-    return JSON.parse(atob(token.split(".")[1]));
+    return JSON.parse(atob(token.split('.')[1]));
   } catch {
     return null;
   }
@@ -13,30 +13,36 @@ function parseJwt(token) {
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  // Khi F5 lại trang, đọc token từ localStorage để không bị mất login
+  const [token, setToken] = useState(getToken());
   const [user, setUser] = useState(() => {
-    const token = getToken();
-    return token ? parseJwt(token) : null;
+    // Khởi tạo user từ token đã lưu (nếu có)
+    const savedToken = getToken();
+    if (savedToken) {
+      const payload = parseJwt(savedToken);
+      if (payload && payload.exp * 1000 > Date.now()) {
+        return payload;
+      }
+    }
+    return null;
   });
 
-  const login = (token) => {
-    saveToken(token);
-    setUser(parseJwt(token));
+  const login = (newToken) => {
+    saveToken(newToken);
+    setToken(newToken);
+    setUser(parseJwt(newToken));
   };
 
   const logout = () => {
     removeToken();
+    setToken(null);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-// Custom hook dùng trong các component
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);
