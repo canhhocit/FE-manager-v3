@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 
 const StaffAvatar = ({ name, size = 35 }) => {
@@ -66,12 +67,12 @@ export default function StaffManager({ api }) {
     setAddLoading(true);
     try {
       await api.post("/users/organizer/staff", addForm);
-      alert("Đã tạo nhân viên thành công! Vui lòng yêu cầu nhân viên check email để xác thực.");
+      alert("Tạo tài khoản thành công. Nhân viên cần check email để xác thực.");
       setShowAddModal(false);
       setAddForm({ username: "", password: "", email: "", fullName: "", phone: "", role: "STAFF" });
       setRefetch((n) => n + 1);
     } catch (err) {
-      alert("Lỗi khi thêm nhân viên: " + (err.message || "Kiểm tra lại dữ liệu"));
+      alert("Lỗi khi tạo tk nhân viên: " + (err.message || "Kiểm tra lại dữ liệu"));
     } finally {
       setAddLoading(false);
     }
@@ -81,9 +82,9 @@ export default function StaffManager({ api }) {
     <div className="animate-fade-in">
       <div className="mb-4 d-flex justify-content-between align-items-end">
         <div>
-          <h4 className="fw-bold mb-1">Quản lý Nhân viên (Staff)</h4>
+          <h4 className="fw-bold mb-1">Quản lý Nhân viên</h4>
           <p className="text-secondary small mb-0">
-            Danh sách nhân viên soát vé thuộc ban tổ chức của bạn.
+            Danh sách nhân viên soát vé.
           </p>
         </div>
         <div className="d-flex gap-2">
@@ -110,7 +111,7 @@ export default function StaffManager({ api }) {
                 <th className="px-4 py-3 border-0">Nhân viên</th>
                 <th className="border-0">Email</th>
                 <th className="border-0 text-center">Trạng thái</th>
-                <th className="border-0 text-end px-4">Thao tác</th>
+                <th className="border-0 text-end px-4">Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -124,7 +125,7 @@ export default function StaffManager({ api }) {
               ) : staffList.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="text-center py-5 text-muted border-0">
-                    Chưa có nhân viên nào. Hãy thêm nhân viên để hỗ trợ check-in sự kiện.
+                    Chưa có nhân viên nào. Hãy thêm nhân viên để hỗ trợ check-in
                   </td>
                 </tr>
               ) : (
@@ -162,7 +163,7 @@ export default function StaffManager({ api }) {
                           disabled={actionLoading === s.username}
                           onClick={() => handleEnable(s.username)}
                         >
-                          {actionLoading === s.username ? "..." : "Kích hoạt"}
+                          {actionLoading === s.username ? "..." : "Mở khóa"}
                         </button>
                       )}
                     </td>

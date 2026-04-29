@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { VND, StatusBadge, COMMISSION_RATE } from "../../utils/helpers";
 import { getImageUrl } from "../../hooks/useApi";
@@ -68,8 +69,7 @@ export default function OrganizerDashboard({ stats, profile }) {
         <div className="col-md-3">
           <div className="card border-0 shadow-sm p-4 h-100 bg-primary text-white" style={{ borderRadius: '20px' }}>
             <div className="d-flex justify-content-center">
-                <small className="fw-bold text-uppercase opacity-75">Thực nhận (Net)</small>
-                {/* <span className="fs-3">💵</span> */}
+                <small className="fw-bold text-uppercase opacity-75">Thực nhận</small>
             </div>
             <h2 className="fw-bold mt-2">{VND(stats.totalRevenue - stats.totalRevenue * COMMISSION_RATE)}</h2>
           </div>
@@ -79,16 +79,14 @@ export default function OrganizerDashboard({ stats, profile }) {
             {/* <div className="d-flex justify-content align-items-center"> */}
             <div className="d-flex justify-content-center">
                 <small className="fw-bold text-uppercase opacity-75">Vé đã bán</small>
-                {/* <span className="fs-3">🎫</span> */}
             </div>
-            <h2 className="fw-bold text-center mt-4">{stats.totalTicketsSold} <small className="fs-6 opacity-75">vé</small></h2>
+            <h2 className="fw-bold text-center mt-4">{stats.totalTicketsSold} </h2>
           </div>
         </div>
         <div className="col-md-3">
           <div className="card border-0 shadow-sm p-4 h-100 bg-dark text-white" style={{ borderRadius: '20px' }}>
             <div className="d-flex justify-content-center">
                 <small className="fw-bold text-uppercase opacity-75">Sự kiện đã tạo</small>
-                {/* <span className="fs-3">📅</span> */}
             </div>
             <h2 className="fw-bold text-center mt-4">{stats.totalEvents}</h2>
           </div>
@@ -97,7 +95,6 @@ export default function OrganizerDashboard({ stats, profile }) {
           <div className="card border-0 shadow-sm p-4 h-100 bg-warning text-dark" style={{ borderRadius: '20px' }}>
             <div className="d-flex justify-content-center">
                 <small className="fw-bold text-uppercase opacity-50">Phí dịch vụ</small>
-                {/* <span className="fs-3">💎</span> */}
             </div>
             <h2 className="fw-bold text-center mt-2">{VND(stats.totalRevenue * COMMISSION_RATE)}</h2>
           </div>
@@ -106,7 +103,7 @@ export default function OrganizerDashboard({ stats, profile }) {
 
       {/* Revenue Growth Chart */}
       <div className="card border-0 shadow-sm p-4 mb-5" style={{ borderRadius: '20px' }}>
-        <h5 className="fw-bold mb-4">Biểu đồ tăng trưởng (Thực nhận)</h5>
+        <h5 className="fw-bold mb-4">Biểu đồ doanh thu</h5>
         <div style={{ height: '300px' }}>
           <canvas id="organizerRevenueChart"></canvas>
         </div>
@@ -167,7 +164,7 @@ export default function OrganizerDashboard({ stats, profile }) {
             })}
               {stats.eventStats.length === 0 && (
                 <tr>
-                    <td colSpan="5" className="text-center py-5 text-muted">Chưa có dữ liệu thống kê nào.</td>
+                    <td colSpan="5" className="text-center py-5 text-muted">Chưa có dữ liệu thống kê.</td>
                 </tr>
               )}
             </tbody>

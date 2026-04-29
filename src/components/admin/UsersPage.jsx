@@ -82,54 +82,59 @@ export default function UsersPage({ api }) {
     }
   };
 
-  const filteredUsers = users.filter(u => {
-    const matchesSearch = u.username.toLowerCase().includes(search.toLowerCase()) || 
-                          (u.fullName ?? "").toLowerCase().includes(search.toLowerCase());
-    const matchesRole = roleFilter === "" || u.role === roleFilter;
-    return matchesSearch && matchesRole;
-  });
+  // Backend handles filtering and pagination, so we use 'users' directly.
+  // We only keep the local search matches if the search is handled client-side, 
+  // but since we also pass search to the API, we can just use 'users'.
+  const displayUsers = users;
 
   return (
     <div className="animate-fade-in">
       <div className="mb-4 d-flex justify-content-between align-items-end">
         <div>
-          <h4 className="fw-bold mb-1">Quản lý người dùng</h4>
-          <p className="text-secondary small mb-0">Quản lý và cấp quyền truy cập hệ thống.</p>
+          <h4 className="fw-bold mb-1">Tổng quan người dùng</h4>
         </div>
       </div>
 
       {/* Stats Row */}
       <div className="row g-3 mb-4">
         <div className="col-md-4">
-          <UserStat label="Khách hàng" value={stats.customers} color="#6c5ce7" icon="👤" />
+          <UserStat label="Khách hàng" value={stats.customers} color="#6c5ce7" icon="" />
         </div>
         <div className="col-md-4">
-          <UserStat label="Ban tổ chức" value={stats.organizers} color="#00b894" icon="🏢" />
+          <UserStat label="Ban tổ chức" value={stats.organizers} color="#00b894" icon="" />
         </div>
         <div className="col-md-4">
-          <UserStat label="Tổng cộng" value={stats.total} color="#0984e3" icon="📊" />
+          <UserStat label="Tổng cộng" value={stats.total} color="#0984e3" icon="" />
         </div>
       </div>
 
       <div className="card border-0 shadow-sm" style={{ borderRadius: '16px', overflow: 'hidden' }}>
         <div className="card-header bg-white p-4 border-0">
-          <div className="row g-3">
-            <div className="col-md-9">
-              <select 
-                className="form-select form-select-sm border-0 bg-light rounded-pill px-3 shadow-none"
+          <div className="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+
+            {/* Select*/}
+            <div style={{ minWidth: "180px", maxWidth: "220px" }}>
+              <select
+                className="form-select form-select-sm border-0 bg-light rounded-pill px-3 shadow-none text-center"
                 value={roleFilter}
-                onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
+                onChange={(e) => {
+                  setRoleFilter(e.target.value);
+                  setPage(1);
+                }}
               >
-                <option value="">Tất cả </option>
+                <option value="">Tất cả</option>
                 <option value="CUSTOMER">Khách hàng</option>
                 <option value="ORGANIZER">Ban tổ chức</option>
               </select>
             </div>
-            <div className="col-md-3 text-md-end">
-              <button className="btn btn-sm btn-outline-secondary rounded-pill px-4 fw-bold" onClick={() => setRefetch(n => n + 1)}>
-                Làm mới ↻
-              </button>
-            </div>
+
+            {/* Button */}
+            <button
+              className="btn btn-sm btn-outline-secondary rounded-pill px-4 fw-bold"
+              onClick={() => setRefetch((n) => n + 1)}
+            >
+              Làm mới ↻
+            </button>
           </div>
         </div>
 
@@ -140,8 +145,8 @@ export default function UsersPage({ api }) {
                 <th className="px-4 py-3 border-0">Người dùng</th>
                 <th className="border-0">Liên hệ</th>
                 <th className="border-0 text-center">Vai trò</th>
-                <th 
-                  className="border-0 cursor-pointer text-primary bg-primary bg-opacity-10" 
+                <th
+                  className="border-0 cursor-pointer text-info"
                   style={{ whiteSpace: 'nowrap' }}
                   onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
                 >
@@ -155,9 +160,9 @@ export default function UsersPage({ api }) {
                 <tr><td colSpan="5" className="text-center py-5 text-muted border-0">
                   <div className="spinner-border text-primary spinner-border-sm me-2"></div> Đang đồng bộ...
                 </td></tr>
-              ) : filteredUsers.length === 0 ? (
+              ) : displayUsers.length === 0 ? (
                 <tr><td colSpan="5" className="text-center py-5 text-muted border-0">Không tìm thấy người dùng phù hợp.</td></tr>
-              ) : filteredUsers.map((u) => (
+              ) : displayUsers.map((u) => (
                 <tr key={u.id}>
                   <td className="px-4 border-0">
                     <div className="d-flex align-items-center gap-3">
@@ -181,23 +186,23 @@ export default function UsersPage({ api }) {
                   </td>
                   <td className="border-0 text-end px-4">
                     <div className="d-flex justify-content-end gap-2">
-                       {u.enabled ? (
-                         <button
-                           className="btn btn-sm btn-outline-danger px-3 rounded-1"
-                           disabled={disablingId === u.username || u.role === "ADMIN"}
-                           onClick={() => handleDisable(u.username)}
-                         >
-                           {disablingId === u.username ? "..." : "Khóa"}
-                         </button>
-                       ) : (
-                         <button
-                           className="btn btn-sm btn-outline-success px-3 rounded-1"
-                           disabled={disablingId === u.username}
-                           onClick={() => handleUnlock(u.username)}
-                         >
-                           {disablingId === u.username ? "..." : "Mở khóa"}
-                         </button>
-                       )}
+                      {u.enabled ? (
+                        <button
+                          className="btn btn-sm btn-outline-danger px-3 rounded-1"
+                          disabled={disablingId === u.username || u.role === "ADMIN"}
+                          onClick={() => handleDisable(u.username)}
+                        >
+                          {disablingId === u.username ? "..." : "Khóa"}
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-sm btn-outline-success px-3 rounded-1"
+                          disabled={disablingId === u.username}
+                          onClick={() => handleUnlock(u.username)}
+                        >
+                          {disablingId === u.username ? "..." : "Mở khóa"}
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

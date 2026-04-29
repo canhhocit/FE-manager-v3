@@ -16,7 +16,7 @@ export default function TicketManager({ event, ticketFormData, setTicketFormData
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 className="fw-bold mb-1">
-                {isEditable ? "Thiết lập vé & Số lượng" : showRevenue ? "Báo cáo Doanh thu & Vé" : "📊 Thống kê Vé bán"}
+                {isEditable ? "Thiết lập vé & Số lượng" : showRevenue ? "Báo cáo Doanh thu & Vé" : "Thống kê Vé bán"}
             </h4>
             <p className="text-muted mb-0">{event.name}</p>
         </div>
@@ -24,29 +24,28 @@ export default function TicketManager({ event, ticketFormData, setTicketFormData
       </div>
       
       <div className="row g-4">
-        {/* Add Ticket Form - Only for UPCOMING */}
         {isEditable && (
             <div className="col-lg-4">
             <div className="card shadow-sm border-0 p-4 sticky-top" style={{ borderRadius: '20px', top: '20px' }}>
-                <h6 className="fw-bold mb-3 d-flex align-items-center gap-2">🎟️ Thêm loại vé mới</h6>
+                <h6 className="fw-bold mb-3 d-flex align-items-center gap-2">Thêm loại vé khác</h6>
                 <form onSubmit={handleAddTicket}>
                 <div className="mb-3">
-                    <label className="form-label small fw-bold text-muted">Tên hạng vé</label>
-                    <input type="text" className="form-control bg-light border-0" required value={ticketFormData.name} onChange={e => setTicketFormData({...ticketFormData, name: e.target.value})} placeholder="Vd: Vé VIP, Vé Sớm..." />
+                    <label className="form-label small fw-bold text-muted">Tên loại vé</label>
+                    <input type="text" className="form-control bg-light border-0" required value={ticketFormData.name} onChange={e => setTicketFormData({...ticketFormData, name: e.target.value})} placeholder="..." />
                 </div>
                 <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Giá tiền (VNĐ)</label>
-                    <input type="number" className="form-control bg-light border-0" required value={ticketFormData.price} onChange={e => setTicketFormData({...ticketFormData, price: e.target.value})} placeholder="Vd: 500000" />
+                    <input type="number" className="form-control bg-light border-0" required value={ticketFormData.price} onChange={e => setTicketFormData({...ticketFormData, price: e.target.value})} placeholder="VND" />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label small fw-bold text-muted">Số lượng phát hành</label>
-                    <input type="number" className="form-control bg-light border-0" required value={ticketFormData.totalQuantity} onChange={e => setTicketFormData({...ticketFormData, totalQuantity: e.target.value})} placeholder="Vd: 100" />
+                    <label className="form-label small fw-bold text-muted">Số lượng</label>
+                    <input type="number" className="form-control bg-light border-0" required value={ticketFormData.totalQuantity} onChange={e => setTicketFormData({...ticketFormData, totalQuantity: e.target.value})} placeholder="" />
                 </div>
                 <div className="mb-3">
                     <label className="form-label small fw-bold text-muted">Ghi chú (Tùy chọn)</label>
-                    <textarea className="form-control bg-light border-0" rows="3" value={ticketFormData.description} onChange={e => setTicketFormData({...ticketFormData, description: e.target.value})} placeholder="Mô tả ưu đãi của vé..."></textarea>
+                    <textarea className="form-control bg-light border-0" rows="3" value={ticketFormData.description} onChange={e => setTicketFormData({...ticketFormData, description: e.target.value})} placeholder="Mô tả vé..."></textarea>
                 </div>
-                <button type="submit" className="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm">THÊM HẠNG VÉ</button>
+                <button type="submit" className="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm">THÊM</button>
                 </form>
             </div>
             </div>
@@ -85,9 +84,7 @@ export default function TicketManager({ event, ticketFormData, setTicketFormData
                               </div>
                           </td>
                           {showRevenue && <td className="py-3 text-end fw-bold text-success">{VND(revenue)}</td>}
-                          {/* <td className="py-3 text-end px-4">
-                            <span className="badge bg-success bg-opacity-10 text-success p-2 px-3 border border-success border-opacity-25 rounded-pill small">Active</span>
-                          </td> */}
+                    
                         </tr>
                     );
                   })}

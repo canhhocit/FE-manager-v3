@@ -2,12 +2,12 @@ import React from "react";
 
 export default function OrganizerSidebar({ activeTab, setActiveTab }) {
   const menuItems = [
-    { id: "dashboard", icon: "📊", label: "Thống kê" },
-    { id: "events", icon: "🎫", label: "Sự kiện của tôi" },
-    { id: "create", icon: "📅", label: "Đăng sự kiện" },
-    { id: "vouchers", icon: "🎟️", label: "Mã giảm giá" },
-    { id: "staff", icon: "👷", label: "Quản lý Nhân viên" },
-    { id: "profile", icon: "👤", label: "Thông tin cá nhân" },
+    { id: "dashboard", icon: "", label: "Thống kê" },
+    { id: "events", icon: "", label: "Sự kiện của tôi" },
+    { id: "create", icon: "", label: "Đăng sự kiện" },
+    { id: "vouchers", icon: "", label: "Mã giảm giá" },
+    { id: "staff", icon: "", label: "Quản lý Nhân viên" },
+    { id: "profile", icon: "", label: "Thông tin cá nhân" },
   ];
 
   return (
@@ -34,7 +34,11 @@ export default function OrganizerSidebar({ activeTab, setActiveTab }) {
         <div className="mt-auto px-4 py-4">
              <button 
                 className="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center gap-2" 
-                onClick={() => window.location.href = "/login"}
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  window.location.href = "/login";
+                }}
              >
                 <span>Đăng xuất</span>
              </button>

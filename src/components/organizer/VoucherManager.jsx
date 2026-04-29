@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { Ticket, Plus, Tag, Calendar, Trash2, Search, Percent, DollarSign } from "lucide-react";
 
@@ -208,13 +209,13 @@ const VoucherManager = ({ api, events }) => {
                       <div className="small text-muted">Đến {new Date(v.endDate).toLocaleDateString('vi-VN')}</div>
                     </td>
                     <td>
-                      <span className="badge bg-light text-dark border">{v.quantity || '∞'}</span>
+                      <span className="badge bg-light text-dark border">{v.quantity || '0'}</span>
                     </td>
                     <td>
                       {new Date() > new Date(v.endDate) ? (
                         <span className="badge bg-danger bg-opacity-10 text-danger rounded-pill">Hết hạn</span>
                       ) : (
-                        <span className="badge bg-success bg-opacity-10 text-success rounded-pill">Đang chạy</span>
+                        <span className="badge bg-success bg-opacity-10 text-success rounded-pill">Đang hoạt động</span>
                       )}
                     </td>
                     <td className="px-4 text-end">

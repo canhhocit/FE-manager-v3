@@ -163,9 +163,8 @@ export default function DashboardPage({ api }) {
 
   return (
     <div className="animate-fade-in px-2">
-      <div className="mb-4">
-        <h4 className="fw-bold mb-1">Bảng điều khiển hệ thống</h4>
-        <p className="text-secondary small">Chào mừng bạn trở lại! Dưới đây là tóm tắt hoạt động của nền tảng.</p>
+      <div className="mb-2">
+        <h4 className="fw-bold mb-1">Tổng quan hệ thống</h4>
       </div>
 
       <StatCards stats={stats} loading={loading} />
@@ -173,7 +172,7 @@ export default function DashboardPage({ api }) {
       <div className="row g-4 mt-2">
         <div className="col-12 col-lg-8">
           <div className="card p-4 h-100 shadow-sm border-0" style={{ minHeight: '350px', borderRadius: '20px' }}>
-            <h6 className="fw-bold mb-4">Xu hướng lợi nhuận (Triệu VNĐ)</h6>
+            <h6 className="fw-bold mb-4">Lợi nhuận hệ thống</h6>
             <div className="flex-grow-1 position-relative" style={{ height: '250px' }}>
               <canvas ref={salesChartRef}></canvas>
             </div>
@@ -181,7 +180,7 @@ export default function DashboardPage({ api }) {
         </div>
         <div className="col-12 col-lg-4">
           <div className="card p-4 h-100 shadow-sm border-0" style={{ minHeight: '350px', borderRadius: '20px' }}>
-            <h6 className="fw-bold mb-4">Trạng thái sự kiện</h6>
+            <h6 className="fw-bold mb-4">Thống kê trạng thái</h6>
             <div className="flex-grow-1 position-relative" style={{ height: '250px' }}>
               <canvas ref={categoryChartRef}></canvas>
             </div>
@@ -191,7 +190,7 @@ export default function DashboardPage({ api }) {
 
       <div className="card border-0 shadow-sm mt-4 overflow-hidden" style={{ borderRadius: '20px' }}>
         <div className="card-header bg-white p-4 border-0 d-flex justify-content-between align-items-center">
-          <h6 className="fw-bold mb-0">Xếp hạng sự kiện bán chạy</h6>
+          <h6 className="fw-bold mb-0">Top sự kiện nổi bật</h6>
         </div>
         <div className="table-responsive">
           <table className="table table-hover align-middle mb-0">
@@ -200,7 +199,7 @@ export default function DashboardPage({ api }) {
                 <th className="px-4 py-3 border-0">Sự kiện</th>
                 <th className="border-0">Vé đã bán</th>
                 <th className="border-0">Tỷ lệ lấp chỗ</th>
-                <th className="border-0">Hoa hồng ({COMMISSION_RATE * 100}%)</th>
+                <th className="border-0">Lợi nhuận ({COMMISSION_RATE * 100}%)</th>
                 <th className="border-0 text-center">Trạng thái</th>
               </tr>
             </thead>

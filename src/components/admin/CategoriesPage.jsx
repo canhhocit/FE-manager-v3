@@ -50,13 +50,13 @@ export default function CategoriesPage({ api }) {
     try {
       const res = await api.del(`/categories/${cat.id}`);
       if (res.code === 1000 || res.status === 200) {
-        setMsg({ text: "Đã xóa danh mục thành công.", type: "success" });
+        setMsg({ text: "xóa danh mục thành công.", type: "success" });
         setRefetch((n) => n + 1);
       } else {
         setMsg({ text: `Không thể xóa: ${res.message}`, type: "danger" });
       }
     } catch (err) {
-      setMsg({ text: "Lỗi khi thực hiện xóa", type: "danger" });
+      setMsg({ text: "Lỗi xóa", type: "danger" });
     }
   };
 
@@ -68,7 +68,6 @@ export default function CategoriesPage({ api }) {
     <div className="animate-fade-in p-2">
       <div className="mb-4">
         <h4 className="fw-bold mb-1">Quản lý danh mục</h4>
-        <p className="text-secondary small">Thiết lập các loại hình sự kiện</p>
       </div>
 
       <div className="row g-4">
@@ -92,7 +91,7 @@ export default function CategoriesPage({ api }) {
                   <label className="form-label small fw-bold text-secondary">Tên danh mục</label>
                   <input
                     className="form-control border-0 bg-light shadow-none rounded-3"
-                    placeholder="VD: Âm nhạc, Hội thảo..."
+                    placeholder="Âm nhạc, Hội thảo..."
                     value={form.name}
                     onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                     required
@@ -104,7 +103,7 @@ export default function CategoriesPage({ api }) {
                   <textarea
                     className="form-control border-0 bg-light shadow-none rounded-3"
                     rows={4}
-                    placeholder="Mô tả ngắn gọn về loại hình này..."
+                    placeholder="Mô tả ngắn gọn..."
                     value={form.description}
                     onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
                   />

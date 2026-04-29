@@ -53,7 +53,7 @@ export default function ProfileModal({ api, onClose, onUpdateSuccess }) {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content border-0 shadow-lg" style={{ borderRadius: '20px' }}>
           <div className="modal-header border-0 p-4 pb-0">
-            <h5 className="fw-bold mb-0">👤 Thông tin cá nhân</h5>
+            <h5 className="fw-bold mb-0">Thông tin cá nhân</h5>
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
           <form onSubmit={handleSubmit}>

@@ -56,7 +56,7 @@ export default function CreateEventForm({
           {/* Tên sự kiện + Danh mục cùng hàng */}
           <div className="col-md-6">
             <label className="form-label small fw-bold text-muted text-uppercase">Tên sự kiện</label>
-            <input type="text" name="name" className="form-control form-control-lg bg-light border-0" required value={formData.name} onChange={handleChange} placeholder="Ví dụ: Đêm ca nhạc Chillies" />
+            <input type="text" name="name" className="form-control form-control-lg bg-light border-0" required value={formData.name} onChange={handleChange} placeholder="Nhập tên sự kiện" />
           </div>
           <div className="col-md-6">
             <label className="form-label small fw-bold text-muted text-uppercase">Danh mục</label>
@@ -132,7 +132,7 @@ export default function CreateEventForm({
 
           <div className="col-12 mt-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="fw-bold mb-0">🎟️ Cấu hình vé</h5>
+              <h5 className="fw-bold mb-0">Cấu hình vé</h5>
               <button type="button" className="btn btn-sm btn-outline-primary rounded-pill px-3" onClick={handleAddTicketType}>+ Thêm loại vé</button>
             </div>
             
@@ -143,7 +143,7 @@ export default function CreateEventForm({
                 )}
                 <div className="row g-3">
                   <div className="col-md-5">
-                    <label className="small fw-bold text-muted">Tên vé (VD: Vé VIP)</label>
+                    <label className="small fw-bold text-muted">Tên loại vé</label>
                     <input type="text" className="form-control bg-light border-0" required value={tt.name} onChange={(e) => handleTicketFieldChange(index, 'name', e.target.value)} />
                   </div>
                   <div className="col-md-4">
