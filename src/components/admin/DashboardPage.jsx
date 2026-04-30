@@ -499,9 +499,6 @@ export default function DashboardPage({ api }) {
                 : "btn-outline-primary text-primary inactive"
             }`}
           >
-            <span className="icon" aria-hidden>
-              🎫
-            </span>
             <span>Sự kiện</span>
           </button>
 
@@ -517,9 +514,6 @@ export default function DashboardPage({ api }) {
                 : "btn-outline-primary text-primary inactive"
             }`}
           >
-            <span className="icon" aria-hidden>
-              💰
-            </span>
             <span>Doanh thu</span>
           </button>
         </div>
