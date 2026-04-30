@@ -48,9 +48,8 @@ const DAY_OPTIONS = [
   { value: "1", label: "Chủ nhật", name: "Sunday" },
 ];
 
-const getDayOptionByCurrentDate = () => String(new Date().getDay() + 1);
-
-const TEMPORAL_API_URL = "http://localhost:8080/statistics-event/by-temporal";
+const TEMPORAL_API_URL = "statistics-event/by-temporal";
+const TOP_EVENTS_API_URL = "statistics-event/top5-events";
 
 const getDisplayDayLabel = (day) => {
   const raw = String(day || "");
@@ -87,8 +86,11 @@ export default function DashboardPage({ api }) {
   const temporalChartRef = useRef(null);
   const apiRef = useRef(api);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState([]);
   const [topEvents, setTopEvents] = useState([]);
+  const [topEventsPeriod, setTopEventsPeriod] = useState({
+    quarter: "",
+    year: "",
+  });
   const [selectedQuarter, setSelectedQuarter] = useState(
     () => Math.floor(new Date().getMonth() / 3) + 1,
   );
@@ -134,34 +136,22 @@ export default function DashboardPage({ api }) {
           monthlyProfit.push(0);
         }
 
-        const [evRes, usRes] = await Promise.all([
+        const [evRes, topEventsRes] = await Promise.all([
           apiRef.current.get("/events/admin/all?size=1000"),
-          apiRef.current.get("/users/admin?page=1&size=1000"),
+          apiRef.current.get(TOP_EVENTS_API_URL),
         ]);
 
         const evList = evRes.result?.content ?? [];
-        const usList = usRes.result?.content ?? [];
 
-        let totalCommission = 0;
-        let totalSold = 0;
-
-        const processedEvents = evList.map((ev) => {
-          let eventSold = 0;
+        evList.forEach((ev) => {
           let eventRev = 0;
-          let totalQty = 0;
 
           ev.ticketTypes?.forEach((tt) => {
             const soldCount =
               (Number(tt.totalQuantity) || 0) -
               (Number(tt.remainingQuantity) || 0);
-            eventSold += soldCount;
             eventRev += soldCount * (Number(tt.price) || 0);
-            totalQty += Number(tt.totalQuantity) || 0;
           });
-
-          const commission = eventRev * COMMISSION_RATE;
-          totalCommission += commission;
-          totalSold += eventSold;
 
           const dateStr = ev.startTime || ev.createdAt;
           if (dateStr) {
@@ -170,33 +160,28 @@ export default function DashboardPage({ api }) {
               const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
               const mIndex = monthKeys.indexOf(key);
               if (mIndex !== -1) {
-                monthlyProfit[mIndex] += commission / 1000000;
+                monthlyProfit[mIndex] += (eventRev * COMMISSION_RATE) / 1000000;
               }
             }
           }
-
-          return {
-            ...ev,
-            ticketsSold: eventSold,
-            totalRevenue: eventRev,
-            totalTickets: totalQty,
-          };
         });
 
-        setStats([
-          {
-            title: "LỢI NHUẬN NỀN TẢNG",
-            value: totalCommission.toLocaleString() + "đ",
-          },
-          { title: "VÉ ĐÃ BÁN", value: totalSold.toLocaleString() },
-          { title: "NGƯỜI DÙNG", value: usList.length.toString() },
-        ]);
+        const topEventsPayload = topEventsRes?.result ?? topEventsRes ?? {};
+        const topEventsList = Array.isArray(topEventsPayload?.events)
+          ? topEventsPayload.events.map((event) => ({
+              eventName: event.eventName || "Không xác định",
+              ticketsSold: Number(event.ticketsSold) || 0,
+              occupancyRate: Number(event.occupancyRate) || 0,
+              totalRevenue: Number(event.totalRevenue) || 0,
+              status: event.status || "",
+            }))
+          : [];
 
-        setTopEvents(
-          [...processedEvents]
-            .sort((a, b) => b.ticketsSold - a.ticketsSold)
-            .slice(0, 5),
-        );
+        setTopEvents(topEventsList);
+        setTopEventsPeriod({
+          quarter: topEventsPayload?.quarter ?? "",
+          year: topEventsPayload?.year ?? "",
+        });
 
         // Sales Chart
         if (salesChartRef.current) {
@@ -743,7 +728,13 @@ export default function DashboardPage({ api }) {
             style={{ borderRadius: "16px" }}
           >
             <div className="card-header bg-white p-3 border-0 d-flex justify-content-between align-items-center">
-              <h6 className="fw-bold mb-0">Top sự kiện nổi bật</h6>
+              <div>
+                <h6 className="fw-bold mb-0">Top sự kiện nổi bật</h6>
+                <small className="text-muted">
+                  Quý {topEventsPeriod.quarter || "-"}. Năm{" "}
+                  {topEventsPeriod.year || "-"}
+                </small>
+              </div>
             </div>
             <div className="table-responsive">
               <table className="table table-hover align-middle mb-0">
@@ -752,9 +743,7 @@ export default function DashboardPage({ api }) {
                     <th className="px-4 py-3 border-0">Sự kiện</th>
                     <th className="border-0">Vé đã bán</th>
                     <th className="border-0">Tỷ lệ lấp chỗ</th>
-                    <th className="border-0">
-                      Lợi nhuận ({COMMISSION_RATE * 100}%)
-                    </th>
+                    <th className="border-0">Doanh thu</th>
                     <th className="border-0 text-center">Trạng thái</th>
                   </tr>
                 </thead>
@@ -765,19 +754,27 @@ export default function DashboardPage({ api }) {
                         Đang tải dữ liệu...
                       </td>
                     </tr>
+                  ) : topEvents.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="5"
+                        className="text-center py-5 border-0 text-muted"
+                      >
+                        Chưa có dữ liệu sự kiện nổi bật.
+                      </td>
+                    </tr>
                   ) : (
                     topEvents.map((ev) => {
-                      const percent =
-                        ev.totalTickets > 0
-                          ? Math.round((ev.ticketsSold / ev.totalTickets) * 100)
-                          : 0;
+                      const percent = Number.isFinite(Number(ev.occupancyRate))
+                        ? Number(ev.occupancyRate)
+                        : 0;
                       return (
-                        <tr key={ev.id}>
+                        <tr key={`${ev.eventName}-${ev.ticketsSold}`}>
                           <td className="px-4 border-0">
-                            <div className="fw-bold text-dark">{ev.name}</div>
-                            <div className="text-muted small">
-                              {ev.categoryName}
+                            <div className="fw-bold text-dark">
+                              {ev.eventName}
                             </div>
+                            <div className="text-muted small">Top nổi bật</div>
                           </td>
                           <td className="border-0 fw-bold text-primary">
                             {ev.ticketsSold.toLocaleString()}
@@ -793,17 +790,21 @@ export default function DashboardPage({ api }) {
                               >
                                 <div
                                   className="progress-bar bg-primary"
-                                  style={{ width: `${percent}%` }}
+                                  style={{
+                                    width: `${Math.min(percent, 100)}%`,
+                                  }}
                                 ></div>
                               </div>
-                              <span className="small fw-bold">{percent}%</span>
+                              <span className="small fw-bold">
+                                {percent.toFixed(
+                                  Number.isInteger(percent) ? 0 : 1,
+                                )}
+                                %
+                              </span>
                             </div>
                           </td>
                           <td className="border-0 fw-bold">
-                            {(
-                              ev.totalRevenue * COMMISSION_RATE
-                            ).toLocaleString()}
-                            đ
+                            {ev.totalRevenue.toLocaleString()}đ
                           </td>
                           <td className="text-center border-0">
                             <StatusBadge status={ev.status} />
