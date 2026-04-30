@@ -45,6 +45,37 @@ export default function CreateEventForm({
     }
   }, [formData.files]);
 
+  // Helpers for date validation
+  const formatDateForInput = (d) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const getMin12Hours = (dateStr) => {
+    if (!dateStr) return undefined;
+    const d = new Date(dateStr);
+    d.setHours(d.getHours() + 12);
+    return formatDateForInput(d);
+  };
+
+  const getMin1Day = (dateStr) => {
+    if (!dateStr) return undefined;
+    const d = new Date(dateStr);
+    d.setDate(d.getDate() + 1);
+    return formatDateForInput(d);
+  };
+
+  const getMin2Hours = (dateStr) => {
+    if (!dateStr) return undefined;
+    const d = new Date(dateStr);
+    d.setHours(d.getHours() + 2);
+    return formatDateForInput(d);
+  };
+
   return (
     <div className="card border-0 shadow-sm p-4 col-xl-10 mx-auto animate__animated animate__fadeIn" style={{ borderRadius: '24px' }}>
       <div className="d-flex align-items-center gap-3 mb-4">
@@ -89,7 +120,7 @@ export default function CreateEventForm({
           <div className="col-md-6">
             <div className="p-3 bg-danger bg-opacity-10 rounded-4 border border-danger border-opacity-10">
               <label className="form-label small fw-bold text-danger text-uppercase mb-2">Ngày Kết thúc bán vé</label>
-              <input type="datetime-local" name="saleEndDate" className="form-control border-white shadow-sm" required value={formData.saleEndDate} onChange={handleChange} min={formData.saleStartDate} />
+              <input type="datetime-local" name="saleEndDate" className="form-control border-white shadow-sm" required value={formData.saleEndDate} onChange={handleChange} min={getMin12Hours(formData.saleStartDate)} />
             </div>
           </div>
 
@@ -97,13 +128,13 @@ export default function CreateEventForm({
           <div className="col-md-6">
             <div className="p-3 bg-light rounded-4 border">
               <label className="form-label small fw-bold text-secondary text-uppercase mb-2">Thời gian diễn ra</label>
-              <input type="datetime-local" name="startTime" className="form-control border-white shadow-sm" required value={formData.startTime} onChange={handleChange} min={formData.saleEndDate} />
+              <input type="datetime-local" name="startTime" className="form-control border-white shadow-sm" required value={formData.startTime} onChange={handleChange} min={getMin1Day(formData.saleEndDate)} />
             </div>
           </div>
           <div className="col-md-6">
             <div className="p-3 bg-light rounded-4 border">
               <label className="form-label small fw-bold text-secondary text-uppercase mb-2">Thời gian kết thúc</label>
-              <input type="datetime-local" name="endTime" className="form-control border-white shadow-sm" required value={formData.endTime} onChange={handleChange} min={formData.startTime} />
+              <input type="datetime-local" name="endTime" className="form-control border-white shadow-sm" required value={formData.endTime} onChange={handleChange} min={getMin2Hours(formData.startTime)} />
             </div>
           </div>
           

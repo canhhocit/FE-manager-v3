@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useApi } from "../hooks/useApi";
+import { formatDate, Pagination } from "../utils/helpers";
 import OrganizerSidebar from "../components/organizer/OrganizerSidebar";
 import OrganizerDashboard from "../components/organizer/OrganizerDashboard";
 import MyEventsList from "../components/organizer/MyEventsList";
@@ -14,6 +15,8 @@ export default function OrganizerPage() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [stats, setStats] = useState(null);
   const [myEvents, setMyEvents] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [categories, setCategories] = useState([]);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -51,17 +54,22 @@ export default function OrganizerPage() {
   });
 
   useEffect(() => {
-    fetchDashData();
     api.get("/categories").then(res => setCategories(res.result || []));
     api.get("/users/my-info").then(res => setProfile(res.result));
   }, []);
+
+  useEffect(() => {
+    fetchDashData();
+  }, [page, activeTab]);
 
   const fetchDashData = async () => {
     try {
       const statsRes = await api.get("/events/organizer/stats");
       setStats(statsRes.result);
-      const eventsRes = await api.get("/events/organizer/my-events");
+      
+      const eventsRes = await api.get(`/events/organizer/my-events?page=${page}&size=6`);
       setMyEvents(eventsRes.result?.content || []);
+      setTotalPages(eventsRes.result?.totalPages || 1);
     } catch (err) {}
   };
 
@@ -79,16 +87,20 @@ export default function OrganizerPage() {
     const eStart = new Date(eventFormData.startTime);
     const eEnd = new Date(eventFormData.endTime);
 
-    if (sEnd <= sStart) {
-      alert("⚠️ Ngày KẾT THÚC bán vé phải sau ngày BẮT ĐẦU bán vé!");
+    // Validate dates with specific gaps
+    const MS_PER_HOUR = 60 * 60 * 1000;
+    const MS_PER_DAY = 24 * MS_PER_HOUR;
+
+    if (sEnd - sStart < 12 * MS_PER_HOUR) {
+      alert("Thời gian KẾT THÚC bán vé phải sau thời gian BẮT ĐẦU ít nhất 12 tiếng");
       return;
     }
-    if (eStart <= sEnd) {
-      alert("⚠️ Thời gian DIỄN RA sự kiện phải sau khi KẾT THÚC bán vé!");
+    if (eStart - sEnd < MS_PER_DAY) {
+      alert("Thời gian DIỄN RA sự kiện phải sau khi KẾT THÚC bán vé ít nhất 1 ngày");
       return;
     }
-    if (eEnd <= eStart) {
-      alert("⚠️ Thời gian KẾT THÚC sự kiện phải sau thời gian BẮT ĐẦU diễn ra!");
+    if (eEnd - eStart < 2 * MS_PER_HOUR) {
+      alert("Thời gian KẾT THÚC sự kiện phải diễn ra ít nhất 2 tiếng");
       return;
     }
 
@@ -110,7 +122,7 @@ export default function OrganizerPage() {
         }
       });
       await api.post("/events", data);
-      alert("Đăng ký sự kiện & vé thành công! Hãy kiên nhẫn chờ Admin duyệt.");
+      alert("Đăng ký sự kiện & vé thành công");
       setEventFormData({
         name: "", categoryId: "", province: "", location: "", startTime: "", endTime: "",
         saleStartDate: "", saleEndDate: "", description: "", files: null,
@@ -146,10 +158,10 @@ export default function OrganizerPage() {
     e.preventDefault();
     try {
       await api.post("/ticket-types", { ...ticketFormData, eventId: selectedEvent.id });
-      alert("Đã thêm hạng vé thành công!");
+      alert("Đã thêm loại vé thành công!");
       setTicketFormData({ name: "", price: "", totalQuantity: "", description: "" });
       openTicketManager(selectedEvent);
-    } catch (err) { alert("Thiết lập vé thất bại."); }
+    } catch (err) { alert("Thêm vé thất bại."); }
   };
 
   return (
@@ -166,7 +178,18 @@ export default function OrganizerPage() {
           )}
 
           {activeTab === "events" && (
-            <MyEventsList myEvents={myEvents} openTicketManager={openTicketManager} />
+            <>
+              <MyEventsList myEvents={myEvents} openTicketManager={openTicketManager} />
+              {totalPages > 1 && (
+                <div className="mt-5 d-flex justify-content-center">
+                  <Pagination 
+                    page={page} 
+                    totalPages={totalPages} 
+                    onPageChange={(p) => setPage(p)} 
+                  />
+                </div>
+              )}
+            </>
           )}
 
           {activeTab === "create" && (

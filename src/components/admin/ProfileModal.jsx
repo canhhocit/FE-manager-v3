@@ -60,7 +60,7 @@ export default function ProfileModal({ api, onClose, onUpdateSuccess }) {
             <div className="modal-body p-4">
               <div className="mb-3">
                 <label className="form-label small fw-bold text-secondary">
-                  Username <span className="text-muted">(không thể đổi)</span>
+                  Username 
                 </label>
 
                 <div className="input-group">
@@ -81,7 +81,7 @@ export default function ProfileModal({ api, onClose, onUpdateSuccess }) {
               </div>
              <div className="mb-3">
   <label className="form-label small fw-bold text-secondary">
-    Email <span className="text-muted">(không thể đổi)</span>
+    Email 
   </label>
 
   <div className="input-group">
@@ -103,8 +103,8 @@ export default function ProfileModal({ api, onClose, onUpdateSuccess }) {
                   <input type="text" name="phone" className="form-control bg-light border-0 shadow-none" value={profile.phone} onChange={handleChange} />
                 </div>
                 <div className="col-md-6">
-                  <label className="form-label small fw-bold text-muted">Mật khẩu mới (Để trống nếu không đổi)</label>
-                  <input type="password" name="password" className="form-control bg-light border-0 shadow-none" value={profile.password} onChange={handleChange} />
+                  <label className="form-label small fw-bold text-muted">Mật khẩu mới </label>
+                  <input type="password" name="password" placeholder="Để trống nếu không đổi" className="form-control bg-light border-0 shadow-none" value={profile.password} onChange={handleChange} />
                 </div>
               </div>
               <div className="mb-0">

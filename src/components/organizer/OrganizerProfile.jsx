@@ -75,12 +75,12 @@ export default function OrganizerProfile({
 
         <hr className="my-4" />
         <h6 className="fw-bold mb-3 text-primary">
-          Đổi mật khẩu (Bỏ trống nếu không đổi)
+          Đổi mật khẩu 
         </h6>
 
         <div className="mb-4">
           <label className="form-label small fw-bold text-muted text-uppercase">
-            Mật khẩu mới
+            Mật khẩu mới 
           </label>
           <input
             type="password"
@@ -89,7 +89,7 @@ export default function OrganizerProfile({
             onChange={(e) =>
               setProfile({ ...profile, password: e.target.value })
             }
-            placeholder="Nhập mật khẩu mới..."
+            placeholder="Nhập mật khẩu mới(Bỏ trống nếu không đổi)"
           />
         </div>
 

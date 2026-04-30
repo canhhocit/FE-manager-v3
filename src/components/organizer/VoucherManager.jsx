@@ -18,6 +18,19 @@ const VoucherManager = ({ api, events }) => {
     eventId: ""
   });
 
+  // Helper to add 1 hour to a date string for 'min' attribute validation
+  const getMinNextHour = (dateStr) => {
+    if (!dateStr) return undefined;
+    const d = new Date(dateStr);
+    d.setHours(d.getHours() + 1);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   useEffect(() => {
     fetchVouchers();
   }, []);
@@ -41,6 +54,17 @@ const VoucherManager = ({ api, events }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const start = new Date(formData.startDate);
+    const end = new Date(formData.endDate);
+    const diffInMs = end - start;
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+
+    if (diffInHours < 1) {
+      alert("Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tiếng!");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       // Convert dates to ISO format
@@ -78,6 +102,21 @@ const VoucherManager = ({ api, events }) => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa mã giảm giá này?")) return;
+    setLoading(true);
+    try {
+      await api.del(`/vouchers/${id}`);
+      alert("Xóa mã giảm giá thành công!");
+      fetchVouchers();
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi khi xóa voucher");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="animate-fade-up">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -85,7 +124,7 @@ const VoucherManager = ({ api, events }) => {
           <h4 className="fw-bold mb-1">Quản lý Mã giảm giá</h4>
           <p className="text-muted small mb-0">Tạo và quản lý các chương trình khuyến mãi cho sự kiện</p>
         </div>
-        <button 
+        <button
           className={`btn ${showForm ? 'btn-outline-secondary' : 'btn-primary'} rounded-pill px-4 d-flex align-items-center gap-2`}
           onClick={() => setShowForm(!showForm)}
         >
@@ -104,9 +143,9 @@ const VoucherManager = ({ api, events }) => {
                 <label className="form-label small fw-bold">Mã Voucher</label>
                 <div className="input-group">
                   <span className="input-group-text bg-light border-end-0"><Tag size={16} /></span>
-                  <input 
-                    type="text" name="code" className="form-control bg-light border-start-0" 
-                    placeholder="VD: SUMMER2024" value={formData.code} onChange={handleChange} required 
+                  <input
+                    type="text" name="code" className="form-control bg-light border-start-0"
+                    placeholder="SUMMER2026" value={formData.code} onChange={handleChange} required
                   />
                 </div>
               </div>
@@ -114,7 +153,7 @@ const VoucherManager = ({ api, events }) => {
                 <label className="form-label small fw-bold">Loại giảm giá</label>
                 <select name="discountType" className="form-select bg-light" value={formData.discountType} onChange={handleChange}>
                   <option value="PERCENTAGE">Phần trăm (%)</option>
-                  <option value="AMOUNT">Số tiền cố định (đ)</option>
+                  <option value="AMOUNT">Số tiền (đ)</option>
                 </select>
               </div>
               <div className="col-md-4">
@@ -123,17 +162,17 @@ const VoucherManager = ({ api, events }) => {
                   <span className="input-group-text bg-light border-end-0">
                     {formData.discountType === 'PERCENTAGE' ? <Percent size={16} /> : <DollarSign size={16} />}
                   </span>
-                  <input 
-                    type="number" name="amount" className="form-control bg-light border-start-0" 
-                    placeholder={formData.discountType === 'PERCENTAGE' ? "VD: 20" : "VD: 50000"} 
-                    value={formData.amount} onChange={handleChange} required 
+                  <input
+                    type="number" name="amount" className="form-control bg-light border-start-0"
+                    placeholder={formData.discountType === 'PERCENTAGE' ? "VD: 20" : "VD: 50000"}
+                    value={formData.amount} onChange={handleChange} required
                   />
                 </div>
               </div>
 
               <div className="col-md-4">
                 <label className="form-label small fw-bold">Số lượng mã</label>
-                <input type="number" name="quantity" className="form-control bg-light" placeholder="VD: 100" value={formData.quantity} onChange={handleChange} />
+                <input type="number" name="quantity" className="form-control bg-light" placeholder="..." value={formData.quantity} onChange={handleChange} />
               </div>
               <div className="col-md-4">
                 <label className="form-label small fw-bold">Đơn tối thiểu (đ)</label>
@@ -141,16 +180,41 @@ const VoucherManager = ({ api, events }) => {
               </div>
               <div className="col-md-4">
                 <label className="form-label small fw-bold">Giảm tối đa (đ)</label>
-                <input type="number" name="maxDiscount" className="form-control bg-light" placeholder="VD: 50000" value={formData.maxDiscount} onChange={handleChange} disabled={formData.discountType === 'AMOUNT'} />
+                <input
+                  type="number"
+                  name="maxDiscount"
+                  className="form-control bg-light"
+                  placeholder="VD: 50000"
+                  value={formData.maxDiscount}
+                  onChange={handleChange}
+                  disabled={formData.discountType === 'AMOUNT'}
+                  style={{ cursor: formData.discountType === 'AMOUNT' ? 'not-allowed' : 'pointer' }}
+                />
               </div>
 
               <div className="col-md-6">
                 <label className="form-label small fw-bold">Ngày bắt đầu</label>
-                <input type="datetime-local" name="startDate" className="form-control bg-light" value={formData.startDate} onChange={handleChange} required />
+                <input 
+                  type="datetime-local" 
+                  name="startDate" 
+                  className="form-control bg-light" 
+                  value={formData.startDate} 
+                  onChange={handleChange} 
+                  required 
+                  min={new Date().toISOString().slice(0, 16)}
+                />
               </div>
               <div className="col-md-6">
                 <label className="form-label small fw-bold">Ngày kết thúc</label>
-                <input type="datetime-local" name="endDate" className="form-control bg-light" value={formData.endDate} onChange={handleChange} required />
+                  <input 
+                    type="datetime-local" 
+                    name="endDate" 
+                    className="form-control bg-light" 
+                    value={formData.endDate} 
+                    onChange={handleChange} 
+                    required 
+                    min={getMinNextHour(formData.startDate) || new Date().toISOString().slice(0, 16)}
+                  />
               </div>
 
               <div className="col-12">
@@ -219,7 +283,13 @@ const VoucherManager = ({ api, events }) => {
                       )}
                     </td>
                     <td className="px-4 text-end">
-                      <button className="btn btn-sm btn-outline-danger border-0"><Trash2 size={16} /></button>
+                      <button 
+                        className="btn btn-sm btn-outline-danger border-0"
+                        onClick={() => handleDelete(v.id)}
+                        disabled={loading}
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))

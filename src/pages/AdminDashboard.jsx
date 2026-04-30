@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { useApi } from "../hooks/useApi";
 import Sidebar, { MENU } from "../components/admin/Sidebar";
 import DashboardPage  from "../components/admin/DashboardPage";
@@ -9,8 +11,15 @@ import ProfileModal from "../components/admin/ProfileModal";
 
 export default function AdminDashboard() {
   const api = useApi();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [active, setActive] = useState("dashboard");
   const [showProfile, setShowProfile] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const PAGE = {
     dashboard:  <DashboardPage  api={api} />,
@@ -60,8 +69,23 @@ export default function AdminDashboard() {
             </h5>
           </div>
           <div className="d-flex align-items-center gap-2 gap-md-3">
-             <button className="btn btn-light btn-sm rounded-circle p-2" title="Notifications" onClick={handleInform}>🔔</button>
-             <span className="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 px-md-3 py-md-2" style={{ borderRadius: '8px', fontSize: '10px' }}>ADMIN</span>
+             <div 
+               className="d-flex align-items-center gap-2 px-3 py-1 cursor-pointer hover-bg-light rounded-pill border" 
+               style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+               onClick={() => setShowProfile(true)}
+             >
+                <div className="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center fw-bold" style={{ width: 32, height: 32, fontSize: 12 }}>A</div>
+                <div className="d-none d-sm-block">
+                  <div className="fw-bold text-dark" style={{ fontSize: 13, lineHeight: 1 }}>{user?.sub ?? "Admin"}</div>
+                </div>
+             </div>
+             <button 
+               className="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold border-2" 
+               onClick={handleLogout}
+               style={{ fontSize: 12 }}
+             >
+               Đăng xuất
+             </button>
           </div>
         </header>
 

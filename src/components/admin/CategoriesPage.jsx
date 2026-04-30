@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Pagination } from "../../utils/helpers";
 
 export default function CategoriesPage({ api }) {
   const [cats, setCats] = useState([]);
@@ -7,6 +8,8 @@ export default function CategoriesPage({ api }) {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState({ text: "", type: "" });
   const [refetch, setRefetch] = useState(0);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   const EMPTY = { id: null, name: "", description: "" };
   const [form, setForm] = useState(EMPTY);
@@ -63,6 +66,9 @@ export default function CategoriesPage({ api }) {
   const filtered = cats.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filtered.length / pageSize);
+  const displayedCats = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
     <div className="animate-fade-in p-2">
@@ -157,7 +163,7 @@ export default function CategoriesPage({ api }) {
                     <tr><td colSpan="3" className="text-center py-5">
                       <div className="spinner-border text-primary spinner-border-sm"></div>
                     </td></tr>
-                  ) : filtered.map((c) => (
+                  ) : displayedCats.map((c) => (
                     <tr key={c.id}>
                       <td className="px-4 border-0">
                         <span className="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-bold border border-primary-subtle" style={{ letterSpacing: '0.5px' }}>
@@ -196,8 +202,11 @@ export default function CategoriesPage({ api }) {
               </table>
             </div>
             
-            <div className="p-3 bg-light-subtle text-center">
+            <div className="p-3 bg-light-subtle d-flex justify-content-between align-items-center">
                <small className="text-muted">Tổng cộng: <strong>{filtered.length}</strong> danh mục</small>
+               {totalPages > 1 && (
+                 <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+               )}
             </div>
           </div>
         </div>

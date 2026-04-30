@@ -293,7 +293,7 @@ export default function EventsPage({ api }) {
 
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams({ page, size: 12 });
+    const params = new URLSearchParams({ page, size: 4 });
     if (search) params.set("search", search);
     if (status) params.set("status", status);
 
@@ -415,9 +415,11 @@ export default function EventsPage({ api }) {
           )}
         </div>
 
-        <div className="p-4 border-top">
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-        </div>
+        {totalPages > 1 && (
+          <div className="p-4 border-top">
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          </div>
+        )}
       </div>
 
       <style>{`

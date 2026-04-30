@@ -38,6 +38,7 @@ export function StatusBadge({ status }) {
 
 // Component phân trang dùng chung
 export function Pagination({ page, totalPages, onPageChange }) {
+  if (totalPages <= 1) return null;
   return (
     <div className="card-footer bg-white d-flex justify-content-between align-items-center">
       <small className="text-muted">Trang {page} / {totalPages}</small>

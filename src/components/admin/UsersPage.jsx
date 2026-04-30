@@ -52,7 +52,7 @@ export default function UsersPage({ api }) {
     setLoading(true);
     const roleParam = roleFilter ? `&role=${roleFilter}` : "";
     const order = sortOrder === "asc" ? "asc" : "desc";
-    api.get(`/users/admin?page=${page}&size=8&search=${search}${roleParam}&sort=createdAt,${order}`).then((res) => {
+    api.get(`/users/admin?page=${page}&size=5&search=${search}${roleParam}&sort=createdAt,${order}`).then((res) => {
       setUsers(res.result?.content ?? []);
       setTotalPages(res.result?.totalPages ?? 1);
       setTotalUsers(res.result?.totalElements ?? 0);
@@ -96,7 +96,7 @@ export default function UsersPage({ api }) {
       </div>
 
       {/* Stats Row */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-1">
         <div className="col-md-4">
           <UserStat label="Khách hàng" value={stats.customers} color="#6c5ce7" icon="" />
         </div>
@@ -211,9 +211,11 @@ export default function UsersPage({ api }) {
           </table>
         </div>
 
-        <div className="p-4 border-top">
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-        </div>
+        {totalPages > 1 && (
+          <div className="p-4 border-top">
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          </div>
+        )}
       </div>
     </div>
   );
