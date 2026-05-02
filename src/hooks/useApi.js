@@ -12,6 +12,7 @@ export const useApi = () => {
 
 export const getImageUrl = (path) => {
   if (!path) return "https://via.placeholder.com/150";
+  if (path.includes('http://') || path.includes('https://')) return path;
   const BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
   return `${BASE}/images/${path}`;
 };
