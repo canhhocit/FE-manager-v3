@@ -66,13 +66,18 @@ export default function StaffManager({ api }) {
     e.preventDefault();
     setAddLoading(true);
     try {
-      await api.post("/users/organizer/staff", addForm);
+      const payload = { ...addForm };
+      if (!payload.phone) delete payload.phone; // Xóa phone nếu để trống để tránh lỗi Pattern
+      
+      await api.post("/users/organizer/staff", payload);
       alert("Tạo tài khoản thành công. Nhân viên cần check email để xác thực.");
       setShowAddModal(false);
       setAddForm({ username: "", password: "", email: "", fullName: "", phone: "", role: "STAFF" });
       setRefetch((n) => n + 1);
     } catch (err) {
-      alert("Lỗi khi tạo tk nhân viên: " + (err.message || "Kiểm tra lại dữ liệu"));
+      console.error("Staff creation error details:", err.response?.data);
+      const errorMsg = err.response?.data?.message || err.message || "Kiểm tra lại dữ liệu";
+      alert("Lỗi khi tạo tk nhân viên: " + errorMsg);
     } finally {
       setAddLoading(false);
     }
