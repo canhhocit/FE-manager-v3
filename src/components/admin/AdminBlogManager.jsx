@@ -175,7 +175,7 @@ const AdminBlogManager = ({ api }) => {
             <table className="table table-hover align-middle mb-0">
               <thead className="bg-light text-secondary small text-uppercase">
                 <tr>
-                  <th className="px-4 py-3 border-0">Nội dung / SEO</th>
+                  <th className="px-4 py-3 border-0">Nội dung </th>
                   <th className="border-0">Tác giả & Liên kết</th>
                   <th className="border-0 text-center">Trạng thái</th>
                   <th className="px-4 border-0 text-end">Thao tác</th>
