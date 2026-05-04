@@ -6,7 +6,8 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
+  // Không gửi token cho các request đăng nhập/đăng ký
+  if (token && !config.url.includes('/auth/')) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
