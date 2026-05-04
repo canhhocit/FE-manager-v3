@@ -67,7 +67,20 @@ export default function Login() {
         setServerError(data.message || "Sai tên đăng nhập hoặc mật khẩu");
       }
     } catch (error) {
-      setServerError(error.response?.data?.message || "Không thể kết nối đến server.");
+      if (error.response) {
+        // Server có phản hồi nhưng mã lỗi (401, 404, 500...)
+        const data = error.response.data;
+        if (error.response.status === 401) {
+          setServerError("Sai tên đăng nhập hoặc mật khẩu.");
+        } else {
+          setServerError(data.message || "Có lỗi xảy ra từ máy chủ.");
+        }
+      } else if (error.request) {
+        // Gửi được request nhưng không nhận được phản hồi (rớt mạng, server sập)
+        setServerError("Không thể kết nối đến server. Vui lòng kiểm tra lại mạng.");
+      } else {
+        setServerError("Lỗi hệ thống: " + error.message);
+      }
     } finally {
       setLoading(false);
     }
