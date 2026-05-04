@@ -275,18 +275,16 @@ export default function OrganizerPage() {
     const eStart = new Date(eventFormData.startTime);
     const eEnd = new Date(eventFormData.endTime);
 
-    if (sEnd <= sStart) {
-      alert("⚠️ Ngày KẾT THÚC bán vé phải sau ngày BẮT ĐẦU bán vé!");
+    if (sEnd <= new Date(sStart.getTime() + 2 * 60 * 60 * 1000)) {
+      alert("Thời gian KẾT THÚC bán vé phải sau khi BẮT ĐẦU ít nhất 2 tiếng!");
       return;
     }
-    if (eStart <= sEnd) {
-      alert("⚠️ Thời gian DIỄN RA sự kiện phải sau khi KẾT THÚC bán vé!");
+    if (eStart < sEnd) {
+      alert("Thời gian DIỄN RA sự kiện phải sau khi KẾT THÚC bán vé!");
       return;
     }
-    if (eEnd <= eStart) {
-      alert(
-        "⚠️ Thời gian KẾT THÚC sự kiện phải sau thời gian BẮT ĐẦU diễn ra!",
-      );
+    if (eEnd <= new Date(eStart.getTime() + 30 * 60 * 1000)) {
+      alert("Thời gian KẾT THÚC sự kiện phải sau khi BẮT ĐẦU ít nhất 30 phút!");
       return;
     }
 
