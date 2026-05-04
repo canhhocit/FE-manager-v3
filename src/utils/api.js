@@ -1,27 +1,27 @@
-const BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+import axios from "axios";
 
-export async function apiFetch(path, options = {}) {
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080",
+});
+
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  const authHeader = (token && token !== "null" && token !== "undefined") ? `Bearer ${token}` : "";
-  
-  const getUrl = (p) => {
-    return `${BASE}${p}`;
-  };
-
-  const res = await fetch(getUrl(path), {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: authHeader,
-      ...options.headers,
-    },
-  });
-  
-  if (res.status === 401) {
-    // Optionally handle logout or token refresh
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
-  return res.json();
-}
+// Auth APIs
+export const loginApi = (username, password) => 
+    api.post("/auth/login", { username, password });
 
-export const API_BASE = BASE;
+export const registerApi = (data) => 
+    api.post("/auth/register", data);
+
+// Event APIs
+export const getEventsApi = (params) => 
+    api.get("/events/search", { params });
+
+export default api;
+export const API_BASE = api.defaults.baseURL;

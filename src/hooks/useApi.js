@@ -1,4 +1,4 @@
-import api from "../api/api";
+import api from "../utils/api";
 
 export const useApi = () => {
   const get = (url, params) => api.get(url, { params }).then(res => res.data);

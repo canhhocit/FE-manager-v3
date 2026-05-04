@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-
-import { API_BASE } from "../utils/api";
-
-const API_URL = `${API_BASE}/auth/login`;
+import { loginApi } from "../utils/api";
 
 export default function Login() {
   const { login } = useAuth();
@@ -21,22 +18,17 @@ export default function Login() {
 
   const validate = () => {
     const errs = {};
-
     if (!form.username) errs.username = "Vui lòng nhập tên đăng nhập";
-
     if (!form.password) errs.password = "Vui lòng nhập mật khẩu";
-
     return errs;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]: value,
     }));
-
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -47,34 +39,21 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setServerError("");
-
     const errs = validate();
-
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
 
     setLoading(true);
-
     try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+      const response = await loginApi(form.username, form.password);
+      const data = response.data;
 
-      const data = await res.json();
-
-      if (res.ok && data.code === 1000) {
+      if (data.code === 1000) {
         login(data.result.token);
-
         const payload = JSON.parse(atob(data.result.token.split(".")[1]));
-
         const scopes = payload.scope ? payload.scope.split(" ") : [];
         
         if (scopes.includes("ROLE_ADMIN")) {
@@ -84,17 +63,11 @@ export default function Login() {
         } else {
           navigate("/");
         }
-        // const role = payload.scope === "ADMIN"
-        //     ? "ADMIN"
-        //     : payload.scope === "ORGANIZER"
-        //       ? "ORGANIZER"
-        //       : "USER"
-        // alert("Đăng nhập thành công với tư cách là "+ role);
       } else {
         setServerError(data.message || "Sai tên đăng nhập hoặc mật khẩu");
       }
-    } catch {
-      setServerError("Không thể kết nối đến server.");
+    } catch (error) {
+      setServerError(error.response?.data?.message || "Không thể kết nối đến server.");
     } finally {
       setLoading(false);
     }
