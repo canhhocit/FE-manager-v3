@@ -396,7 +396,7 @@ export default function EventsPage({ api }) {
 
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams({ page, size: 36 });
+    const params = new URLSearchParams({ page, size: 8 });
     if (search) params.set("search", search);
     if (status) params.set("status", status);
 
