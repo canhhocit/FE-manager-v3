@@ -375,6 +375,17 @@ export default function OrganizerPage() {
     }
   };
 
+  const handleDeleteEvent = async (id) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) return;
+    try {
+      await api.del(`/events/${id}`);
+      alert("Đã xóa sự kiện thành công!");
+      fetchDashData();
+    } catch (err) {
+      alert(err.response?.data?.message || "Lỗi khi xóa sự kiện. Lưu ý: Chỉ có thể xóa sự kiện chưa bán được vé nào.");
+    }
+  };
+
   return (
     <div
       className="d-flex"
@@ -400,6 +411,7 @@ export default function OrganizerPage() {
             <MyEventsList
               myEvents={myEvents}
               openTicketManager={openTicketManager}
+              onDelete={handleDeleteEvent}
             />
           )}
 

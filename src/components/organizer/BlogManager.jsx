@@ -20,6 +20,7 @@ const getStatusBadge = (status) => {
 };
 
 const BlogManager = ({ api, myEvents = [] }) => {
+  const BLOG_URL = import.meta.env.VITE_BLOG_URL || "http://localhost:5174";
   const [posts, setPosts] = useState([]);
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -326,12 +327,12 @@ const BlogManager = ({ api, myEvents = [] }) => {
                           <td className="px-4 text-end">
                             <div className="d-flex justify-content-end gap-1">
                               {p.status === 'PUBLISHED' && (
-                                <a href={`http://localhost:5174/blog/${p.slug || p.id}`} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-outline-info rounded-pill px-3 text-decoration-none d-flex align-items-center gap-1">
+                                <a href={`${BLOG_URL}/blog/${p.slug || p.id}`} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-outline-info rounded-pill px-3 text-decoration-none d-flex align-items-center gap-1">
                                   <Eye size={14} /> Xem
                                 </a>
                               )}
                               <button className="btn btn-sm btn-light rounded-circle p-2 shadow-sm" title="Chỉnh sửa" onClick={() => handleEdit(p)}><Edit size={14} /></button>
-                              <button className="btn btn-sm btn-light rounded-circle p-2 shadow-sm text-danger" title="Xóa bài" onClick={() => handleDelete(p.id)} disabled={p.status === 'PUBLISHED'}><Trash2 size={14} /></button>
+                              <button className="btn btn-sm btn-light rounded-circle p-2 shadow-sm text-danger" title="Xóa bài" onClick={() => handleDelete(p.id)}><Trash2 size={14} /></button>
                             </div>
                           </td>
                         </tr>
