@@ -20,7 +20,10 @@ const getStatusBadge = (status) => {
 };
 
 const BlogManager = ({ api, myEvents = [] }) => {
-  const BLOG_URL = import.meta.env.VITE_BLOG_URL || "http://localhost:5174";
+let BLOG_URL = import.meta.env.VITE_BLOG_URL || "http://localhost:5174";
+  if (BLOG_URL && !BLOG_URL.startsWith('http')) {
+    BLOG_URL = `https://${BLOG_URL}`;
+  }
   const [posts, setPosts] = useState([]);
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
